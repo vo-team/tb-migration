@@ -128,9 +128,31 @@ def getdevicetelemetrybytoken(tburl,entitytype,entityid,token):
         print("getdevicetelemetrybytoken error " + r.text)
         return False     
 
-def getdevicetelemetryforkeybytoken(tburl,entitytype,entityid,token,key):
+# def getdevicetelemetryforkeybytoken(tburl,entitytype,entityid,token,key):
+#     headers = {'Accept': 'application/json', 'X-Authorization' : token}
+#     r = requests.get( "{}/api/plugins/telemetry/{}/{}/values/timeseries".format(tburl,entitytype,entityid), params={'keys' : key, 'startTs': "1614432188000", 'endTs' : "1614442188000", 'limit':'5000', 'agg' : 'NONE'},  headers=headers)
+#     if r.status_code == 200:
+#         data = json.loads(r.text)
+#         return data
+#     else:
+#         print("getdevicetelemetrybytoken error " + r.text)
+#         return False 
+
+def getdevicetelemetryforkeybytoken(tburl,entitytype,entityid,token,key,endTs,startTs=1514764800000,limit=3000):
+    
+    queryparams = {
+        'keys' : key, 
+        'startTs': startTs, 
+        'endTs' : endTs, 
+        'limit': limit, 
+        'agg' : 'NONE'
+    }
     headers = {'Accept': 'application/json', 'X-Authorization' : token}
-    r = requests.get( "{}/api/plugins/telemetry/{}/{}/values/timeseries".format(tburl,entitytype,entityid), params={'keys' : key, 'startTs': "1614432188000", 'endTs' : "1614442188000", 'limit':'5000', 'agg' : 'NONE'},  headers=headers)
+    r = requests.get(
+         "{}/api/plugins/telemetry/{}/{}/values/timeseries".format(tburl,entitytype,entityid), 
+        params=queryparams,  
+        headers=headers)
+    
     if r.status_code == 200:
         data = json.loads(r.text)
         return data

@@ -22,6 +22,16 @@ def getdeviceparamdata(deviceid, devicetype,paramkey):
         token,
         paramkey,
         currentTS)
+    while data is False:
+        time.sleep(20)
+        data = mgdevices.getdevicetelemetryforkeybytoken(
+            _TBURL,
+            devicetype,
+            deviceid,
+            token,
+            paramkey,
+            currentTS)      
+    
     reqindex = 1
 
     with open('./output/datatest_{}_{}-{}.json'.format(paramkey,deviceid,reqindex), 'w', encoding='utf-8') as f:

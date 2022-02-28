@@ -72,8 +72,16 @@ def getdevicedata(deviceid,deviceType):
 
 def getdatafromalldevices():
     token = lt.gettoken(_TBURL,_TBUSER,_TBPWD)
+    
+    customers = mgcustomers.getcustomersbytoken(_TBURL,token)
+    with open('./output/customers.json', 'w', encoding='utf-8') as f:
+        json.dump(customers, f, ensure_ascii=False, indent=4)
+    
 
     devices = mgdevices.getdevicesbytoken(_TBURL,token)
+    with open('./output/devices.json', 'w', encoding='utf-8') as f:
+        json.dump(devices, f, ensure_ascii=False, indent=4)
+            
     for device in devices:
         time.sleep(10)
         getdevicedata(device['id']['id'],device['id']['entityType'])

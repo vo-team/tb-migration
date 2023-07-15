@@ -8,8 +8,8 @@ import json
 import os
 
 _TBURL = "https://esc.isi.gr/"
-_TBUSER = "alexakos@isi.gr"
-_TBPWD = "ei5kGK1*9q1oUoT*"
+_TBUSER = "user@isi.gr"
+_TBPWD = "****************"
 
 
 def updatedeviced(devices):

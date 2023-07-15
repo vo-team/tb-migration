@@ -8,8 +8,8 @@ import json
 import os
 
 _TBURL = "http://iot.voteam.gr:8080"
-_TBUSER = "chris.alexakos@gmail.com"
-_TBPWD = "$rBGw1YW8$p8K0^K"
+_TBUSER = "user@isi.gr"
+_TBPWD = "****************"
 
 def getdeviceparamdata(deviceid, devicetype,paramkey):
     currentTS = int(time.time() * 1000)

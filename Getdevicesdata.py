@@ -7,9 +7,10 @@ import time
 import json
 import os
 
-_TBURL = "https://esc.isi.gr/"
-_TBUSER = "alexakos@isi.gr"
-_TBPWD = "ei5kGK1*9q1oUoT*"
+
+_TBURL = "http://iot.voteam.gr:8080"
+_TBUSER = "user@isi.gr"
+_TBPWD = "****************"
 
 def getdeviceparamdata(deviceid, devicetype,paramkey):
     print("-- Retrieve data for device {} for parameter {}".format(deviceid,paramkey))
@@ -116,5 +117,5 @@ def getdatafromalldevices():
     
 
 if __name__ == '__main__':
-    #getdevicedata('220b6d80-028d-11ea-856a-83c3f676babf','DEVICE')
+    #getdevicedata('159cd550-7926-11eb-a9da-9d23daefb115','DEVICE')
     getdatafromalldevices()

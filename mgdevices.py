@@ -48,11 +48,15 @@ def getdevicecredentialsbytoken(tburl,deviceid,token):
         return False
 
 
-def getdeviceattributes(tburl,entitytype,entityid,username,password):
+def getdeviceattributes(tburl,entitytype,entityid,username,password,scope=None):
     token = lt.gettoken(tburl,username,password)
     print (token)
     headers = {'Accept': 'application/json', 'X-Authorization' : token}
-    r = requests.get( "{}/api/plugins/telemetry/{}/{}/values/attributes".format(tburl,entitytype,entityid ),  headers=headers)
+    if scope is None:
+       r = requests.get( "{}/api/plugins/telemetry/{}/{}/values/attributes".format(tburl,entitytype,entityid ),  headers=headers)
+    else:
+       r = requests.get( "{}/api/plugins/telemetry/{}/{}/values/attributes/{}".format(tburl,entitytype,entityid,scope ),  headers=headers)
+       
     if r.status_code == 200:
         data = json.loads(r.text)
         return data
@@ -60,9 +64,12 @@ def getdeviceattributes(tburl,entitytype,entityid,username,password):
         print("getdeviceattributes error " + r.text)
         return False
 
-def getdeviceattributesbytoken(tburl,entitytype,entityid,token):
+def getdeviceattributesbytoken(tburl,entitytype,entityid,token,scope=None):
     headers = {'Accept': 'application/json', 'X-Authorization' : token}
-    r = requests.get( "{}/api/plugins/telemetry/{}/{}/values/attributes".format(tburl,entitytype,entityid ),  headers=headers)
+    if scope is None:
+       r = requests.get( "{}/api/plugins/telemetry/{}/{}/values/attributes".format(tburl,entitytype,entityid ),  headers=headers)
+    else:
+       r = requests.get( "{}/api/plugins/telemetry/{}/{}/values/attributes/{}".format(tburl,entitytype,entityid,scope ),  headers=headers)
     if r.status_code == 200:
         data = json.loads(r.text)
         return data

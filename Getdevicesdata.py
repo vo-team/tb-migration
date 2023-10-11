@@ -7,11 +7,12 @@ import time
 import json
 import os
 
-_TBURL = "http://iot.voteam.gr:8080"
-_TBUSER = "chris.alexakos@gmail.com"
-_TBPWD = "$rBGw1YW8$p8K0^K"
+_TBURL = "https://esc.isi.gr/"
+_TBUSER = "alexakos@isi.gr"
+_TBPWD = "ei5kGK1*9q1oUoT*"
 
 def getdeviceparamdata(deviceid, devicetype,paramkey):
+    print("-- Retrieve data for device {} for parameter {}".format(deviceid,paramkey))
     currentTS = int(time.time() * 1000)
     token = lt.gettoken(_TBURL,_TBUSER,_TBPWD)
 
@@ -23,14 +24,17 @@ def getdeviceparamdata(deviceid, devicetype,paramkey):
         paramkey,
         currentTS)
     while data is False:
-        time.sleep(20)
+        time.sleep(1)
+        token = lt.gettoken(_TBURL,_TBUSER,_TBPWD)
         data = mgdevices.getdevicetelemetryforkeybytoken(
             _TBURL,
             devicetype,
             deviceid,
             token,
             paramkey,
-            currentTS)      
+            currentTS)
+        
+              
     
     reqindex = 1
 
@@ -40,10 +44,10 @@ def getdeviceparamdata(deviceid, devicetype,paramkey):
     flagEndTs = True
     while flagEndTs:
         latest=min(data[paramkey], key=lambda d: int(d['ts']))
-        print(latest)
+        #print(latest)
         newendts = int(latest['ts'])-1000
-        print(newendts)
-        time.sleep(10)
+        #print(newendts)
+        time.sleep(1)
         data = mgdevices.getdevicetelemetryforkeybytoken(
             _TBURL,
             devicetype,
@@ -52,7 +56,8 @@ def getdeviceparamdata(deviceid, devicetype,paramkey):
             paramkey,
             newendts)
         while data is False:
-            time.sleep(20)
+            time.sleep(1)
+            token = lt.gettoken(_TBURL,_TBUSER,_TBPWD)
             data = mgdevices.getdevicetelemetryforkeybytoken(
                 _TBURL,
                 devicetype,
@@ -64,7 +69,7 @@ def getdeviceparamdata(deviceid, devicetype,paramkey):
             flagEndTs = False
         else:
             reqindex +=1
-            print(reqindex)     
+            #print(reqindex)     
             with open('./output/datatest_{}_{}-{}.json'.format(paramkey,deviceid,reqindex), 'w', encoding='utf-8') as f:
                 json.dump(data, f, ensure_ascii=False, indent=4)    
 
@@ -72,6 +77,7 @@ def getdeviceparamdata(deviceid, devicetype,paramkey):
     #while flagEndTs:
 
 def getdevicedata(deviceid,deviceType):
+    print("-- Initialise data retrieval for device {}".format(deviceid))
     token = lt.gettoken(_TBURL,_TBUSER,_TBPWD)
 
     device_telkeys = mgdevices.getdevicetelementrykeysbytoken(_TBURL,deviceType,deviceid,token)
@@ -91,12 +97,24 @@ def getdatafromalldevices():
     devices = mgdevices.getdevicesbytoken(_TBURL,token)
     with open('./output/devices.json', 'w', encoding='utf-8') as f:
         json.dump(devices, f, ensure_ascii=False, indent=4)
+    blacklistdevices = []
+    if os.path.isfile("./output/tmp_parsed_devices.json"):
+      print("-- Loading already retrieved device data from temporary file ./output/tmp_parsed_devices.json")
+      with open("./output/tmp_parsed_devices.json") as tmp_file:
+         blacklistdevices = json.load(tmp_file)
             
     for device in devices:
-        time.sleep(10)
-        getdevicedata(device['id']['id'],device['id']['entityType'])
+        if device['id']['id'] not in blacklistdevices:
+           time.sleep(10)
+           getdevicedata(device['id']['id'],device['id']['entityType'])
+           with open("./output/tmp_parsed_devices.json", 'w', encoding='utf-8') as f:
+              blacklistdevices.append(device['id'])
+              json.dump(blacklistdevices, f, ensure_ascii=False, indent=4)
+        else:
+           print("-- Data for device {} already retrieved".format(device['id']['id']))           
+           
     
 
 if __name__ == '__main__':
-    #getdevicedata('159cd550-7926-11eb-a9da-9d23daefb115','DEVICE')
+    #getdevicedata('220b6d80-028d-11ea-856a-83c3f676babf','DEVICE')
     getdatafromalldevices()
